@@ -8,9 +8,9 @@ from chouti01 import models
 from django.forms.utils import ErrorDict
 from django.core.exceptions import ValidationError
 
-def index(request):
-    print('333')
-    return render(request,'index.html')
+
+global logineduser
+logineduser = ''
 
 
 def mobile_validate(value):
@@ -37,6 +37,8 @@ class UserRegisterForm(forms.Form):
 def login(request):
     if request.method == 'POST':
         result = {'status':False,'message':''};
+        keeploginvalue = request.POST.get('keeploginvalue')
+        keeploginvalueInt = int(keeploginvalue)
         login_choice = eval(json.dumps(request.POST))['login_choice']
         if login_choice == 'phoneLogin':
             username = eval(json.dumps(request.POST))['mobile']
@@ -57,6 +59,10 @@ def login(request):
                     pwd_sql = models.UserInfo.objects.filter(phone=username).values_list('pwd').first()[0]
                     if password == pwd_sql:
                         result['status'] = True
+                        request.session['user'] = username
+                        global logineduser
+                        logineduser = username
+                        # return render(request, 'index1223.html')
                         # loginedUser = username
                         # print('234')
                         # return render(request,'index.html',{'loginedUser':loginedUser})
@@ -77,6 +83,9 @@ def login(request):
                         result['message'] = {'loginErrorMessage': [{'phonelogin': 'noTheUser', 'message': '用户名或密码错误'}]}
         else:
             result['message'] = json.loads(obj.errors.as_json())
+        # if keeploginvalueInt == 1:
+        #     request.session['user'] = username
+
 
         return HttpResponse(json.dumps(result))
 
@@ -103,6 +112,22 @@ def register(request):
             result['message'] = json.loads(obj.errors.as_json())
 
         return HttpResponse(json.dumps(result))
+
+def auth(func):
+    def inner(request,*args,**kwargs):
+        user = request.session.get('user',None)
+        if not user:
+            return redirect('/login/')
+        return func(request,*args,**kwargs)
+    return inner
+
+@auth
+def index(request):
+    global logineduser
+    user = request.session.get('user')
+    return render(request, 'index.html', {'logineduser': logineduser})
+
+
 
 
 
