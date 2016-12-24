@@ -281,7 +281,8 @@
             background-position: 0px -99px;
             position: absolute;
             left: 78px;
-            top: 5px;
+            /*bottom: 0;*/
+            top: 10px;
         }
         .btn-login-span:hover{
             background-position: 0px -132px;
@@ -423,7 +424,7 @@
             background-position: 0px -99px;
             position: absolute;
             left: 77px;
-            top: 193px;
+            top: 195px;
         }
         .next-step:hover{
             background-position: 0px -132px;
