@@ -9,7 +9,7 @@ def sendMsg(Mobile,Msg):
     }
     params = urllib.parse.urlencode(payload)
     r = urllib.request.urlopen('http://10.102.35.130:8080/spring/sendSend.jsp?%s' % params)
-sendMsg('17769040425','python3 newnew')
+
 
 # params = 'mobile=17769040425&msg=python2test1359'
 # data = r.read()
