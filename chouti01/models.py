@@ -67,7 +67,7 @@ class Comment(models.Model):
     ctime = models.DateTimeField()
 
 
-    device = models.CharField(max_length=16)
+    device = models.CharField(max_length=16,default=0)
     content = models.CharField(max_length=150)
 
     reply_id = models.ForeignKey('Comment', related_name='b', null=True, blank=True)

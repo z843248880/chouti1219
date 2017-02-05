@@ -4,10 +4,15 @@ from django.shortcuts import render,HttpResponse,redirect
 
 from django import forms
 import json,re,time,datetime
+
+from datetime import date
+
+
 from chouti01 import models
 from django.forms.utils import ErrorDict
 from django.core.exceptions import ValidationError
-from backend import sendMsg, commons, randomcode
+from backend import sendMsg, commons, randomcode,pager
+from django.db.models import F
 
 
 global logineduser
@@ -60,7 +65,7 @@ def login(request):
                 gt_limit_time_count = models.login_failed.objects.filter(phone=username,ctime__lt=limit_time).count()
                 if gt_limit_time_count:
                     models.login_failed.objects.filter(phone=username).update(ctime=current_time,times=0)
-                from django.db.models import F
+
                 models.login_failed.objects.filter(phone=username).update(ctime=current_time,times=F('times') + 1)
                 # ret.status = 'True'
 
@@ -133,12 +138,65 @@ def auth(func):
 
 @auth
 def index(request):
-    global logineduser
-    user = request.session.get('user_info')['username']
-    if not user:
-        phoneuser = request.session.get('user_info')['phone']
-        return render(request, 'index.html', {'logineduser': phoneuser})
-    return render(request, 'index.html', {'logineduser': user})
+    if request.method == 'GET':
+        current_page = request.GET.get('page','1')
+        print('current_page:',current_page)
+        all_pages = models.News.objects.all().count()
+        page_obj = pager.Pagination(current_page,all_pages)
+        global logineduser
+        user = request.session.get('user_info')['username']
+
+        sql = """
+                SELECT
+                    "chouti01_news"."nid",
+                    "chouti01_news"."title",
+                    "chouti01_news"."url",
+                    "chouti01_news"."content",
+                    "chouti01_news"."ctime",
+                    "chouti01_userinfo"."username",
+                    "chouti01_newstype"."caption",
+                    "chouti01_news"."favor_count",
+                    "chouti01_news"."comment_count",
+                    "chouti01_favor"."nid"
+                FROM
+                    "chouti01_news"
+                LEFT OUTER JOIN "chouti01_userinfo" ON (
+                    "chouti01_news"."user_info_id" = "chouti01_userinfo"."nid"
+                )
+                LEFT OUTER JOIN "chouti01_newstype" ON (
+                    "chouti01_news"."news_type_id" = "chouti01_newstype"."nid"
+                )
+                LEFT OUTER JOIN "chouti01_favor" ON (
+                    "chouti01_news"."nid" = "chouti01_favor"."news_id"
+                    and
+                    "chouti01_news".user_info_id = %s
+                )
+                ORDER BY "chouti01_news"."nid" DESC
+                LIMIT 10 OFFSET %s
+
+                """
+        # for i in range(14,100):
+        #     bt = 'biaoti' + str(i)
+        #     lj = 'lianjie' + str(i)
+        #     zy = 'zhaiyao' + str(i)
+        #     ct = datetime.datetime.now()
+        #     uid = 10
+        #     ntid = 3
+        #
+        #     models.News.objects.create(user_info_id=uid,news_type_id=ntid,title=bt,url=lj,content=zy,ctime=ct)
+
+        from django.db import connection
+        cursor = connection.cursor()
+        current_login_user_nid = request.session['user_info']['nid']
+        str_page = page_obj.string_pager('/index/')
+        print(page_obj.start)
+        cursor.execute(sql,[current_login_user_nid,page_obj.start])
+        newsret = cursor.fetchall()
+
+        if not user:
+            phoneuser = request.session.get('user_info')['phone']
+            return render(request, 'index.html', {'logineduser': phoneuser,'newsitems':newsret,'str_page':str_page})
+        return render(request, 'index.html', {'logineduser': user,'newsitems':newsret,'str_page':str_page})
 
 def logout(request):
     request.session.clear()
@@ -200,6 +258,91 @@ def urlpublish(request):
         print(a)
         ret.status = 'True'
         return HttpResponse(json.dumps(ret.__dict__))
+
+
+def favor(request):
+    if request.method == 'POST':
+        ret = commons.BaseResponse()
+        news_get_id = request.POST.get('news_id')
+        user_get_id = request.session.get('user_info')['nid']
+
+        favor_user_news_conut = models.Favor.objects.filter(user_info_id=user_get_id,news_id=news_get_id).count()
+        if favor_user_news_conut:
+            models.Favor.objects.filter(user_info_id=user_get_id,news_id=news_get_id).delete()
+            models.News.objects.filter(nid=news_get_id).update(favor_count=F('favor_count') - 1)
+
+            ret.code = commons.StatusCodeEnum.FavorMinus
+        else:
+            current_time = datetime.datetime.now()
+            models.Favor.objects.create(user_info_id=user_get_id,news_id=news_get_id,ctime=current_time)
+            models.News.objects.filter(nid=news_get_id).update(favor_count=F('favor_count') + 1)
+
+            ret.code = commons.StatusCodeEnum.FavorPlus
+        ret.status = True
+        return HttpResponse(json.dumps(ret.__dict__))
+
+class CJsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        #if isinstance(obj, datetime):
+            #return obj.strftime('%Y-%m-%d %H:%M:%S')
+        if isinstance(obj, datetime.date):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
+        else:
+            return json.JSONEncoder.default(self, obj)
+
+
+def content(request):
+    ret = commons.BaseResponse()
+    if request.method == 'POST':
+        # models.Comment.objects.filter(nid__lt=10).delete()
+        news_get_id = request.POST.get('news_id')
+        user_get_id = request.session.get('user_info')['nid']
+        contentneirong = request.POST.get('contentneirong')
+        # current_time = datetime.datetime.now()
+        current_time = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+        models.Comment.objects.create(user_info_id=user_get_id,news_id=news_get_id,ctime=current_time,content=contentneirong)
+        models.News.objects.filter(nid=news_get_id).update(comment_count=F('comment_count') + 1)
+        ret.status = True
+        return HttpResponse(json.dumps(ret.__dict__))
+    elif request.method == 'GET':
+        news_get_id = request.GET.get('news_id')
+        print('enwid:', news_get_id)
+        sql = """
+            SELECT
+                "chouti01_comment"."nid",
+                "chouti01_comment"."content",
+                "chouti01_userinfo"."nid",
+                "chouti01_news"."comment_count",
+                "chouti01_comment"."ctime"
+            FROM
+                "chouti01_comment"
+            LEFT OUTER JOIN "chouti01_userinfo" ON (
+                "chouti01_comment"."user_info_id" = "chouti01_userinfo"."nid"
+            )
+            LEFT OUTER JOIN "chouti01_news" ON (
+                "chouti01_comment"."news_id" = "chouti01_news"."nid"
+            )
+            WHERE
+                "chouti01_comment"."news_id" = %s
+            """
+
+        from django.db import connection
+        cursor = connection.cursor()
+
+        cursor.execute(sql,[news_get_id,])
+        contentret = cursor.fetchall()
+        print(contentret)
+        ret.status = True
+        ret.summary = contentret
+        # print(ret.summary)
+        # print(contentret)
+        return HttpResponse(json.dumps(ret.__dict__,cls=CJsonEncoder))
+
+def searchtable(request):
+    if request.method == 'GET':
+        a = models.Comment.objects.values_list()
+        print(a)
+        return HttpResponse(None)
 
 
 

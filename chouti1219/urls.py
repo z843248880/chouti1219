@@ -26,4 +26,7 @@ urlpatterns = [
     url(r'^getmbcode/', views.getmbcode),
     url(r'^logout/', views.logout),
     url(r'^urlpublish/', views.urlpublish),
+    url(r'^favor/', views.favor),
+    url(r'^content/', views.content),
+    url(r'^searchtable/', views.searchtable),
 ]

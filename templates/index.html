@@ -15,33 +15,89 @@
 
 
 {% block content1 %}
-    <div class="item">
-        <div class="part1">
-            <a class="news-alink" href="https://www.baidu.com">冲突与争吵中，土耳其总统制修宪草案闯过议会“首关”</a>
-            <span class="link-name-span">-www.thepaper.cn</span>
-            <a class="news-caption"><span class="news-caption-span">42区</span></a>
-            <div class="part1-coment">
-                <span class="part1-coment-span">当地时间15日晚，土耳其宪法修正案第18项修改条款在议会投票通过，至此全部条款已分别以单项条款的形式在议会通过第一轮投票，该修正案试图从宪法上赋予总统实权。</span>
+    {% for item in newsitems %}
+        <div class="item">
+            <div class="part1">
+                <a class="news-alink" href={{ item.2 }}>{{ item.1 }}</a>
+                <span class="link-name-span">-{{ item.2 }}</span>
+                <a class="news-caption"><span class="news-caption-span">{{ item.6 }}</span></a>
+                <div class="part1-coment">
+                    <span class="part1-coment-span">{{ item.3 }}</span>
+                </div>
             </div>
+
+            <div class="part2">
+                <a class="part2-a1" onclick="doFavor(this,{{ item.0 }});">
+                    {% if item.9 %}
+                        <span class="part2-a1-span favor_active"></span>
+                    {% else %}
+                        <span class="part2-a1-span"></span>
+                    {% endif %}
+
+                    <b class="ab" id="news_favor_{{ item.0 }}">{{ item.7 }}</b>
+                </a>
+
+                <a class="part2-a2 content-a" onclick="doGetContent(this,{{ item.0 }});"><span class="part2-a2-span"></span><b class="ab">{{ item.8 }}</b></a>
+
+                <a class="part2-a3"><span class="part2-a3-span"></span></a>
+
+                <a class="part2-a4"><span class="part2-a4-span"></span><b class="ab">{{ item.0 }}</b></a>
+
+                <a class="part2-a5"><b class="ab">{{ item.4 }}入热榜</b></a>
+            </div>
+
+            <div class="content-area-{{ item.0 }} hide" >
+                <div class="content-area-header">
+                    <a class="content-close" onclick="closeContent(this,{{ item.0 }});">
+
+                    </a>
+                </div>
+
+                <div class="content-area-body">
+                    <ul class="content-ul-{{ item.0 }}">
+{#                            {% for contentItem in contentitmes %}#}
+{#                                <li class="content-li-list">#}
+{#                                    <div class="content-li-list-area">#}
+{#                                        {{ contentItem.3 }} kongge {{ contentItem.1 }} kongge {{ contentItem.2 }} over#}
+{#                                    </div>#}
+{#                                </li>#}
+{#                            {% endfor %}#}
+                    </ul>
+                    <div class="user-content">
+                        <div class="content-input">
+                            <textarea class="content-input-textarea"></textarea>
+
+
+                        </div>
+                        <div class="content-submit">
+                            <a class="content-submit-a" onclick="doContent(this,{{ item.0 }});">
+                                评论
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <div class="bottomborder">
+
+            </div>
+
         </div>
+    {% endfor %}
 
-        <div class="part2">
-            <a class="part2-a1"><span class="part2-a1-span"></span><b class="ab">5</b></a>
-
-            <a class="part2-a2"><span class="part2-a2-span"></span><b class="ab">5</b></a>
-
-            <a class="part2-a3"><span class="part2-a3-span"></span><b class="ab">5</b></a>
-
-            <a class="part2-a4"><span class="part2-a4-span"></span><b class="ab">5</b></a>
-
-            <a class="part2-a5"><b class="ab">25minites入热榜</b></a>
-        </div>
-
-        <div class="bottomborder">
-
+    <div class="pager-outer">
+        <div class="pager-inner">
+            <ul class="pager-inner-ul">
+                {{ str_page }}
+            </ul>
         </div>
 
     </div>
+
 {% endblock %}
 
 
