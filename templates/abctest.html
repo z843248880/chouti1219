@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <div class="test">
+
+    </div>
+
+
+
+    <script src="/static/js/jquery-1.12.4.js"></script>
+    <script src="/static/js/jquery.cookie.js"></script>
+    <script type="text/javascript">
+        String.prototype.replaceAll = function(str, substr, replacement) {
+            if(replacement === null) {
+                replacement = '';
+            }
+            str = str.replace(new RegExp(substr, 'gm'), replacement);
+            return str;
+        };
+        var data = {
+            "(1,'qqq',None,104)":{
+                "(2,'360','1',104)": {
+                    "(4,'baidu','2',104)": {
+                        "(44,'baidu','4',104)":{}
+                    }
+                },
+                "(3,'ali','1',104)": {}
+            },
+            "(5,'baidu',None,104)": {
+                "(8,'baidu','5',104)": {}
+            },
+            "(6,'baidu',None,104)": {
+                "(7,'baidu','6',104)": {}
+            }
+        }
+        var dataBuild = [];
+        function getDataArray(d){for(var k in d){
+            var kd = k.split(",");
+            for(var j = 0; j < kd.length; j++){
+                kd[j] = kd[j].replaceAll(kd[j],"\\(","");
+                kd[j] = kd[j].replaceAll(kd[j],"\\)","");
+                kd[j] = kd[j].replaceAll(kd[j],"'","");
+            }
+            var newD = {
+                id:parseInt(kd[0]),
+                pid:kd[2] === 'None' ? 0 : parseInt(kd[2]),
+                txt:k,
+                margin:0,
+                level:0,
+                childs:""
+            }
+            dataBuild.push(newD)
+            if(JSON.stringify(d[k]) != "{}"){
+                getDataArray(d[k]);
+            }
+        }}
+        getDataArray(data);
+
+        var dataArray = [];
+        function cacMargin(){
+            for (var i = 0; i < dataBuild.length; i++) {
+                if(dataBuild[i].pid == 0){
+                    dataBuild[i].margin = 0;
+                    dataBuild[i].level = 1;
+                    dataArray.push(dataBuild[i]);
+                }
+                var dataArrayChilds = [];
+                for (var j = 0; j < dataBuild.length; j++) {
+                    if(dataBuild[i].id == dataBuild[j].pid && dataBuild[j].pid != 0){
+                        dataBuild[j].margin = dataBuild[i].level * 30;
+                        dataBuild[j].level = dataBuild[i].level + 1;
+                        dataArrayChilds.push(dataBuild[j]);
+                    }
+                }
+                dataBuild[i].childs = dataArrayChilds;
+            }
+        }
+        cacMargin();
+
+
+        html_str = '';
+        function aa(dd){
+            for(var i = 0; i < dd.length; i++) {
+                html_str += '<li style="margin-left:' + dd[i].margin + 'px;">' + dd[i].txt + '</li>';
+                if(dd[i].childs.length > 0){
+                    aa(dd[i].childs);
+                }
+            }
+        }
+        aa(dataArray);
+        console.log(html_str);
+        $('.test').append(html_str);
+
+    </script>
+</body>
+</html>

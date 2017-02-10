@@ -1,5 +1,5 @@
 {% extends "login_mother_model.html" %}
-
+{% load commentTree %}
 
 {% block content %}
     <ul>
@@ -55,15 +55,20 @@
 
                 <div class="content-area-body">
                     <ul class="content-ul-{{ item.0 }}">
+{#                        {% tree comment_dic %}#}
 {#                            {% for contentItem in contentitmes %}#}
 {#                                <li class="content-li-list">#}
 {#                                    <div class="content-li-list-area">#}
 {#                                        {{ contentItem.3 }} kongge {{ contentItem.1 }} kongge {{ contentItem.2 }} over#}
+
 {#                                    </div>#}
 {#                                </li>#}
 {#                            {% endfor %}#}
                     </ul>
                     <div class="user-content">
+                        <div class="huifuyonghu-{{ item.0 }} hide huifuyonghutopborder">
+                            <span class="reply-user-span" style="font-size: 12px;color: #2459a2">回复 zhenxibo:</span>
+                        </div>
                         <div class="content-input">
                             <textarea class="content-input-textarea"></textarea>
 

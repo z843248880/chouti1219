@@ -1,0 +1,973 @@
+{% load commentTree %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/chouti02______________________.css" />
+{#    <style>#}
+{#        .page-header{#}
+{#            width:100%;#}
+{#            height:44px;#}
+{#            background-color: #2459a2;#}
+{#            background-color: forestgreen;#}
+{#        }#}
+{#    </style>#}
+</head>
+<body>
+    <div id="shade" class="shade hide">
+
+    </div>
+
+    <div id="kong" class="kong hide">
+        <div class="register-login-header">
+            <div class="div-login">
+               <span class="span-login">登录</span>
+            </div>
+            <div class="div-register">
+                <span class="span-register">注册</span>
+                <span class="login-register-cancle" onclick="canClick()"></span>
+            </div>
+
+        </div>
+        <div class="register-login-body">
+            <div class="left-login">
+                <div class="left-login-header">
+                    <ul>
+                        <li class="phone-login-li">
+                            <span class="phone-login" onclick="phoneLogin();">
+                                手机号登录
+                            </span>
+                        </li>
+                        <li class="border-login-li">
+                            <span class="border-login-li-span" style="border-left: 1px solid lightblue;margin-left: 20px;">
+
+                            </span>
+                        </li>
+                        <li class="user-login-li">
+                            <span class="user-login" onclick="userLogin();">
+                                用户名登录
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="left-login-body-phone">
+                    <div class="left-login-body-phone-mid">
+                        <div class="err-msg"></div>
+                        <div>
+                            <select class="region input-union">
+                                <option value="86">中国(+86)</option>
+                                <option value="852">中国香港(+852)</option>
+                                <option value="853">中国澳门(+853)</option>
+                                <option value="886">中国台湾(+886)</option>
+                                <option value="1">美国(+1)</option>
+                                <option value="1">加拿大(+1)</option>
+                                <option value="60">马来西亚(+60)</option>
+                                <option value="61">澳洲(+61)</option>
+                                <option value="81">日本(+81)</option>
+                                <option value="82">韩国(+82)</option>
+                                <option value="65">新加坡(+65)</option>
+                                <option value="44">英国(+44)</option>
+                                <option value="33">法国(+33)</option>
+                                <option value="7">俄罗斯(+7)</option>
+                                <option value="91">印度(+91)</option>
+                                <option value="66">泰国(+66)</option>
+                                <option value="49">德国(+49)</option>
+                            </select>
+                            </div>
+                            <form class="form-mobilelogin-login" action="#" autocomplete="on">
+                                <div class="input-union-phone1">
+                                    <input type="text" name="mobile" id="mobile" placeholder="手机号" class="mobile f1" tabindex="1" require="true" label="手机号" phone="true"/>
+{#                                    <span class="input-warning ">手机号不能为空</span>#}
+                                </div>
+                                <div class="input-union-pwd1"><input type="password" name="loginpwd" id="mbpwd" placeholder="密码" class="mbpwd f1" tabindex="2" require="true" label="密码" minLen="6"/></div>
+
+                            </form>
+                    </div>
+
+                    <div class="box-idlogin hide" >
+                        <div class="err-msg"></div>
+                            <form class="form-idlogin" action="#" autocomplete="on">
+                                <div class="pr">
+                                    <input type="text" name="userid" id="userid" placeholder="用户名" class="userid f1" tabindex="1" require="true" minLen="8" label="用户名"/>
+                                </div>
+                                <div class="pr">
+                                    <input type="password" name="loginpwd" id="userpwd" placeholder="密码" class="pwd f1" tabindex="2" require="true" minLen="6" label="密码"/>
+                                </div>
+                            </form>
+                    </div>
+
+                    <div class="no-valid hide" style="height: 13px"></div>
+
+                    <div class="left-login-body-phone-bottom">
+                        <div style="position:relative;">
+                            <span class="bottom-login-checkbox">
+                                <input type="checkbox" class="keeplogin" value="1" checked onclick="Keeplogin();"/>
+                                <span class="autoLoginText">一个月内自动登录</span>
+                            </span>
+                            <span class="fgtpwd">
+                                <a href="/profile/password/reset" class="forgetPwdA">
+                                    忘记密码?
+                                </a>
+                            </span>
+                        </div>
+                        <div class="login-bottom" style="position: relative;" >
+                            <span class="btn-login-span" onclick="OnSubmit('userlogin');">登录</span>
+                            <span style="display:none;"><img src="/static/images/loading.gif" >正在登录</span>
+
+                        </div>
+                    </div>
+{#                    <form class="form-mobilelogin-login">#}
+{#                            <input class="hide" name="loginErrorMessage"/>#}
+{#                    </form>#}
+{#                    <form class="form-idlogin">#}
+{#                            <input class="hide" name="loginErrorMessage"/>#}
+{#                    </form>#}
+                    <span id="inputerror" nametag="inputerror1" class="inputerror hide"></span>
+
+
+                </div>
+            </div>
+
+            <div class="left-login-border-right"></div>
+
+            <div class="right-register">
+                <div class="right-register-header">
+                    <div class="right-register-header-text">
+                        <span class="firstStep" style="color: #abb6d2;font-size: 14px;">
+                            1 填写手机号
+                        </span>
+                        <span class="midStep" style="color: #abb6d2;font-size: 14px;">
+                            &gt;
+                        </span>
+                        <span class="secondStep" style="color: #abb6d2;font-size: 14px;">
+                            2 填写基本资料
+                        </span>
+                    </div>
+                </div>
+
+                <div class="right-register-body">
+                    <div class="err-msg"></div>
+                        <div>
+                            <select class="region input-union">
+                                <option value="86">中国(+86)</option>
+                                <option value="852">中国香港(+852)</option>
+                                <option value="853">中国澳门(+853)</option>
+                                <option value="886">中国台湾(+886)</option>
+                                <option value="1">美国(+1)</option>
+                                <option value="1">加拿大(+1)</option>
+                                <option value="60">马来西亚(+60)</option>
+                                <option value="61">澳洲(+61)</option>
+                                <option value="81">日本(+81)</option>
+                                <option value="82">韩国(+82)</option>
+                                <option value="65">新加坡(+65)</option>
+                                <option value="44">英国(+44)</option>
+                                <option value="33">法国(+33)</option>
+                                <option value="7">俄罗斯(+7)</option>
+                                <option value="91">印度(+91)</option>
+                                <option value="66">泰国(+66)</option>
+                                <option value="49">德国(+49)</option>
+                            </select>
+                            </div>
+                            <form class="form-mobilelogin-register" action="#" autocomplete="on">
+                                <div class="input-union-phone2">
+                                    <input type="text" name="registermobile" id="registermobile" placeholder="手机号" class="register-mobile f3" tabindex="1"  require="true" label="手机号" phone="true"/>
+                                </div>
+                                <span class="mbck-span" nametag="register-exclude-span" onclick="getMbCode();">获取验证码</span>
+                                <span id="mbck" nametag="register-exclude-span" class="see-mbck hide">
+
+                                </span>
+                                <div class="input-union-checkcode2"><input type="text" name="mbcd" id="mbcd" placeholder="验证码" class="mbcd f3" tabindex="2" require="true" label="验证码" coderequire="true"/></div>
+                                <div class="input-union-pwd2"><input type="password" name="registerpwd" id="registerpwd" placeholder="密码" class="mbpwd f3" tabindex="2"  require="true" minLen="6" label="密码"/></div>
+                                <span class="next-step" nametag="register-exclude-span" onclick="OnRegister('userregister');">
+                                    下一步
+                                </span>
+
+                                <input class="hide" name="thePhoneIsUsed"/>
+
+                            </form>
+                </div>
+                <span id="inputerror1" nametag="inputerror1" class="inputerror1"></span>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="page-header">
+        <div class="header-inner">
+            <div class="header-inner-left">
+                <a class="header-image" href="/index/"></a>
+                <ul>
+                    <li>全部</li>
+                    <li>42区</li>
+                    <li>段子</li>
+                    <li>图片</li>
+                    <li>挨踢1024</li>
+                    <li>你问我答</li>
+                </ul>
+            </div>
+
+            <div class="header-inner-right">
+
+                <input type="text" name="header-search" class="header-search"/>
+
+                {% block content %} {% endblock %}
+                <a class="search-icon">
+                    <span class="search-icon-span"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-body">
+        <div class="page-body-middle">
+            <div class="body-show-main">
+                <div class="body-show-main-header">
+                    <span class="mosthot">最热</span><span class="mosthot">最新</span>
+                    <div class="publish-btn" onclick="publishspanclick();">
+                        <span class="plusicon"></span>
+                        <span class="publishspan">发布</span>
+                    </div>
+                    <div class="publishspan-bottom-border">
+
+                    </div>
+                </div>
+                {% block content1 %} {% endblock %}
+
+
+            </div>
+            <div class="user-setting-logout hide" onmouseover="seesettingsandlogout();" onmouseout="hidestandlg();">
+                <div class="settings" >
+                    <a class="setting-a" >设置</a>
+                </div>
+                <div class="logout" onclick="logoutuser();">
+                    <a class="logout-a" >退出</a>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="shadow-main hide">
+
+    </div>
+
+    <div class="publish-main hide">
+        <div class="publish-main-header">
+            <span class="publish-main-header-span">
+                分享新发现
+            </span>
+            <a class="close-publish-a" onclick="closepublish();"></a>
+        </div>
+
+        <div class="publish-main-body">
+            <div class="publish-main-body-one">
+                <div class="publish-tags">
+                    <a class="tag1">链接</a>
+                    <a class="tag1">文字</a>
+                    <a class="tag1">图片</a>
+                </div>
+                <div class="publish-main-body-two">
+                    <div class="tianjialianjie">
+                        添加链接
+                    </div>
+                    <div class="shurulianjie">
+                        <div class="lianjie-input">
+                            <input type="text" class="input-text" name="lianjie"/>
+                        </div>
+                        <div class="input-a">
+                            <a class="huoqubiaoti">
+                                获取标题
+                            </a>
+                        </div>
+                    </div>
+                    <div class="biaoti-wenben">
+                        标题
+                    </div>
+                    <div class="biaoti-div">
+                        <input type="text" class="input-text-biaoti" name="biaoti"/>
+                    </div>
+                    <div class="tianjiazhaiyao">
+                        添加摘要（选填）
+                    </div>
+                    <div class="zhaiyaoneirong">
+                        <textarea class="zhaiyaotext" name="zhaiyao"></textarea>
+                    </div>
+
+                    <div class="publishto">
+                        <span class="fabuwenben">
+                            发布到:
+                        </span>
+                        <a class="classmore" onclick="classmoreclickfunc(this);" id="42qu">42区</a>
+                        <a class="classmore" onclick="classmoreclickfunc(this);" id="duanzi">段子</a>
+                        <a class="classmore" onclick="classmoreclickfunc(this);" id="tupian">图片</a>
+                        <a class="classmore" onclick="classmoreclickfunc(this);" id="aiti1024">挨踢1024</a>
+                        <a class="classmore" onclick="classmoreclickfunc(this);" id="niwenwoda">你问我答</a>
+                    </div>
+
+                    <div class="main-bottom">
+                        <div class="main-bottom-right">
+                            <a class="clearlianjie">
+                                清空
+                            </a>
+                            <a class="pub-but" onclick="publishurl();">
+                                发布
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+
+    </div>
+
+
+
+
+
+
+    <script src="/static/js/jquery-1.12.4.js"></script>
+    <script src="/static/js/jquery.cookie.js"></script>
+    <script type="text/javascript">
+        String.prototype.replaceAll = function(str, substr, replacement) {
+				if(replacement === null) {
+					replacement = '';
+				}
+				str = str.replace(new RegExp(substr, 'gm'), replacement);
+				return str;
+			};
+        String.prototype.trim = function() {
+				return this.replace(/(^\s*)|(\s*$)/g, "");
+			};
+
+
+
+
+
+
+
+
+
+
+
+
+        global_reply_id = 'None';
+
+        function Click(){
+            var t1 = document.getElementById('shade');
+            var t2 = document.getElementById('kong');
+
+
+            t1.classList.remove('hide');
+            t2.classList.remove('hide');
+        }
+
+        function canClick(){
+            var t1 = document.getElementById('shade');
+            var t2 = document.getElementById('kong');
+
+
+            t1.classList.add('hide');
+            t2.classList.add('hide');
+        }
+
+        function phoneLogin(){
+            $('.box-idlogin,.no-valid').addClass('hide');
+            $('.left-login-body-phone-mid').removeClass('hide');
+        }
+
+        function userLogin(){
+            $('.left-login-body-phone-mid').addClass('hide');
+            $('.box-idlogin,.no-valid').removeClass('hide');
+        }
+
+        function getMbCode(){
+
+            var checkret = checkMarkCodeMethod();
+            if(checkret){
+                var info_dict = {};
+                info_dict['phoneval'] = $('.register-mobile').val();
+                console.log($('.register-mobile').val());
+                $.ajax({
+                    url : '/getmbcode/',
+                    type : 'POST',
+                    data : info_dict ,
+                    dataType : 'json',
+                    success:function(data){
+                        if(data['status']){
+{#                            console.log('ok');#}
+                        }else{
+                            var errormsg = (data['summary']);
+                            $('#inputerror1').text(errormsg);
+                            $('#inputerror1').removeClass('hide');
+                        }
+
+
+                    }
+
+                })
+
+
+
+
+
+                $('.mbck-span').text('10(秒)');
+                $('.mbck-span').removeAttr('onclick');
+                $('.mbck-span').addClass('not-allow-click');
+                function f1(){
+                    var mbvalue = $('.mbck-span').text();
+                    var mbnumvalue = Number(mbvalue.replace(/[^0-9]/ig,'')) - 1;
+                    $('.mbck-span').text(mbnumvalue.toString() + '(秒)');
+                    if(mbnumvalue == 0){
+                        $('.mbck-span').text('获取验证码');
+                        clearInterval(timeinterval);
+                        $('.mbck-span').attr('onclick','getMbCode()');
+                        $('.mbck-span').removeClass('not-allow-click');
+                    }
+                }
+                var timeinterval = setInterval(f1,1000);
+
+            }
+        }
+
+
+
+        function OnRegister(usermode){
+            flag_ret = checkMethod('.form-mobilelogin-register',usermode);
+            if(flag_ret){
+                $('.mbck-span').text('获取验证码');
+{#                clearInterval(timeinterval);#}
+                $('.mbck-span').attr('onclick','getMbCode()');
+                $('.mbck-span').removeClass('not-allow-click');
+                OnRegisterBack();
+
+            }else{
+                return false;
+            }
+        }
+        function OnRegisterBack() {
+            whatform1 = 'form-mobilelogin-register';
+            $('form[class="' + whatform1 + '"] span').not("span[nametag='register-exclude-span']").remove();
+            var info_dict = {};
+
+
+            $('form[class="' + whatform1 + '"] input').each(function(){
+                var v = $(this).val();
+                var n = $(this).attr('name');
+                info_dict[n] = v;
+
+            })
+
+            $.ajax({
+                url : '/register/',
+                type : 'POST',
+                data : info_dict ,
+                dataType : 'json',
+                success:function(data){
+                    if(data['status']) {
+                        console.log('ggg');
+                        location.href = 'http://10.103.9.83:8001/index';
+                    }
+                    else {
+                        console.log('lll')
+                        var errormsg = data['summary'];
+                        $('#inputerror1').text(errormsg);
+                        $('#inputerror1').removeClass('hide');
+                    }
+                },
+                error:function(data){
+
+                }
+            })
+        }
+
+
+
+
+
+
+        login_choice = "";
+        function OnSubmit(usermode){
+            var flag_ret = "";
+            hidestatus = $('.box-idlogin').hasClass('hide');
+            if(hidestatus){
+                login_choice = "phoneLogin"
+                whatform = '.form-mobilelogin-login'
+                whatform1 = 'form-mobilelogin-login'
+            }else{
+                login_choice = "userLogin"
+                whatform = '.form-idlogin'
+                whatform1 = 'form-idlogin'
+            }
+
+            flag_ret = checkMethod(whatform,usermode);
+            if(flag_ret){
+                OnSubmitBack();
+            }else{
+                return false;
+            }
+        }
+
+
+        function OnSubmitBack(){
+
+            $('form[class="' + whatform1 + '"] span').not("span[nametag='register-exclude-span']").remove();
+            var info_dict = {};
+            var keeploginvalue = $('.keeplogin').attr('value');
+            info_dict['login_choice'] = login_choice;
+            info_dict['keeploginvalue'] = keeploginvalue;
+            $('form[class="' + whatform1 + '"] input').each(function(){
+                var v = $(this).val();
+                var n = $(this).attr('name');
+                info_dict[n] = v;
+            })
+
+            $.ajax({
+                url : '/login/',
+                type : 'POST',
+                data : info_dict ,
+                dataType : 'json',
+                success:function(data){
+                    if(data['status']) {
+                        console.log('ggggg');
+                        location.href = 'http://10.103.9.83:8001/index'
+                    }
+                    else {
+                        var errormsg = data['summary'];
+                        $('#inputerror').text(errormsg);
+                        $('#inputerror').removeClass('hide');
+                    }
+                },
+                error:function(data){
+
+                }
+            })
+        }
+
+        function checkMethod(formarg,usermode){
+            function ErrorMessage(inp,message){
+                if(usermode == 'userregister'){
+                    $('#inputerror1').text(message)
+                    $('#inputerror1').removeClass('hide')
+                }
+                else{
+                    $('#inputerror').text(message)
+                    $('#inputerror').removeClass('hide')
+                }
+            }
+
+
+
+                var flag = true;
+                $('.inputerror,.inputerror1').addClass('hide');
+{#                $(formarg).find('span').not("span[nametag='register-exclude-span']").remove();#}
+                $(formarg).find(':text,:password').each(function(){
+                    var requireStatus = $(this).attr('require');
+                    if(requireStatus){
+                        var val = $(this).val();
+                        if(val.length<=0){
+                            var label = $(this).attr('label');
+                            ErrorMessage($(this),label + '不能为空');
+                            flag = false;
+                            return false;
+                        }
+
+
+                        var minLen=$(this).attr('minLen');
+                        var intMinLen = parseInt(minLen);
+                        if(val.length<=intMinLen){
+                            var label = $(this).attr('label');
+                            ErrorMessage($(this),label + '不能小于' + minLen);
+                            flag = false;
+                            return false;
+                        }
+
+                        var phoneStatus = $(this).attr('phone');
+                        var phoneReg = /^1[3|5|7|8]\d{9}$/
+                        if(phoneStatus){
+                            if(!phoneReg.test(val)){
+                                var label = $(this).attr('label');
+                                ErrorMessage($(this),label + '格式错误');
+                                flag = false;
+                                return false;
+                            }
+
+                        }
+
+
+                    }
+                });
+
+                return flag;
+
+        }
+
+
+        function checkMarkCodeMethod(){
+            function ErrorMessage(message){
+                $('#inputerror1').text(message)
+                $('#inputerror1').removeClass('hide')
+            }
+
+                var flag = true;
+                $('.inputerror,.inputerror1').addClass('hide');
+                var registerphonevalue = $('.register-mobile').val();
+                if(registerphonevalue.length<=0){
+                    var label = $('.register-mobile').attr('label');
+                    ErrorMessage(label + '不能为空');
+                    flag = false;
+                    return false;
+                }
+                var phoneReg = /^1[3|5|7|8]\d{9}$/
+                if(!phoneReg.test(registerphonevalue)){
+                    var label = $('.register-mobile').attr('label');
+                    ErrorMessage(label + '格式错误');
+                    flag = false;
+                    return false;
+                }
+                return flag;
+
+        }
+
+
+
+
+        function Keeplogin(){
+            var keepvalue = $('.keeplogin').attr('value');
+            var keepvalueInt = parseInt(keepvalue)
+            if(keepvalueInt == 0){
+                $('.keeplogin').attr('value','1');
+            }else{
+                $('.keeplogin').attr('value','0');
+            }
+        }
+
+        function seesettingsandlogout(){
+            $('.user-setting-logout').removeClass('hide');
+        }
+
+        function hidestandlg(){
+            $('.user-setting-logout').addClass('hide');
+        }
+
+        function logoutuser(){
+            location.href = 'http://10.103.9.83:8001/logout/'
+        }
+
+        function closepublish() {
+            $('.shadow-main').addClass('hide');
+            $('.publish-main').addClass('hide');
+        }
+
+        function publishlock() {
+            $('.shadow-main').removeClass('hide');
+            $('.publish-main').removeClass('hide');
+        }
+
+        function classmoreclickfunc(ths) {
+            var val = $(ths).text();
+            $('.publishto').find("a").each(function(){
+                var innerval = $(this).text();
+                console.log(innerval)
+                if(val == innerval){
+                    $(this).removeClass('classmore');
+                    $(this).addClass('classmoreclick');
+                }else{
+                    $(this).removeClass('classmoreclick');
+                    $(this).addClass('classmore');
+                }
+            })
+        }
+
+        function publishspanclick() {
+            var isloginval = $('.is_login').attr('isloginornot');
+            if(isloginval == 'yes'){
+                publishlock();
+            }else{
+                Click();
+            }
+        }
+
+        function publishurl() {
+            var url_info = {};
+            $('.publishto').find('a').each(function(){
+                if($(this).hasClass('classmoreclick')){
+                    var caption =$(this).text();
+                    url_info['caption'] = caption;
+                }
+            })
+            $('.publish-main-body-two').find('input,textarea').each(function(){
+                var val=$(this).val();
+                var name=$(this).attr('name');
+                url_info[name] = val;
+            })
+            var isloginval = $('.is_login').attr('isloginornot');
+
+            url_info['phone'] = "{{ logineduser }}";
+            console.log(url_info);
+            $.ajax({
+                url : '/urlpublish/',
+                type : 'POST',
+                data : url_info,
+                dataType : 'json',
+                success:function(data){
+                    if(data['status']){
+                        location.href = 'http://10.103.9.83:8001/index';
+{#                        alert('ok');#}
+                    }else{
+{#                        alert('no');#}
+                    }
+                }
+            })
+        }
+
+        function doFavor(ths,newsnid) {
+            var loginstatus = $('.is_login').attr('isloginornot');
+            if(loginstatus == 'yes'){
+{#                console.log('yesjiantouno');#}
+                $.ajax({
+                    url : '/favor/',
+                    type : 'POST',
+                    data : {news_id:newsnid},
+                    dataType : 'json',
+                    success:function(data){
+                        if(data['status']){
+                            var $favorCount = $('#news_favor_'+newsnid);
+                            var favorc = parseInt($favorCount.text());
+                            var retcode = data['code'];
+                            if(retcode == 2301){
+                                console.log('2301');
+                                $(ths).find('span').addClass('favor_active');
+                                $favorCount.text(favorc + 1);
+                                AddFavorAnimation(ths);
+                            }else if(retcode == 2302){
+                                console.log('2302');
+                                $(ths).find('span').removeClass('favor_active');
+                                $favorCount.text(favorc - 1);
+
+                                MinusFavorAnimation(ths);
+                            }
+                        }else{
+                            console.log('no');
+                        }
+                    }
+                });
+
+
+            }else{
+                Click();
+            }
+
+        }
+
+        function doContent(ths,newsnid) {
+            var contentneirong = $('.content-area-' + newsnid).find("textarea").val();
+{#            var contentneirong = $('.content-input-textarea').val();#}
+            if(contentneirong.length == 0){
+                console.log('no');
+                return false;
+            }else{
+                $('.huifuyonghu-' + newsnid).addClass('hide');
+{#                global_reply_id = 'None';#}
+                console.log('yes');
+                $.ajax({
+                    url : '/content/',
+                    type : 'POST',
+                    data : {news_id:newsnid,contentneirong:contentneirong,replyid:global_reply_id},
+                    dataType : 'json',
+                    success:function(data){
+                        if(data['status']){
+                            doGetContent(ths,newsnid);
+{#                            console.log('global_repy_id:',global_reply_id);#}
+                            $('.content-area-' + newsnid).find("textarea").val('');
+                        }else{
+                            console.log('no');
+                        }
+                    }
+                });
+            }
+
+        }
+
+        function doGetContent(ths,newsnid) {
+            html_str = '';
+            $('.content-ul-' + newsnid).empty();
+            $.ajax({
+                url : '/content/',
+                type : 'GET',
+                data : {news_id:newsnid},
+                dataType : 'json',
+                success:function(data){
+                    if(data['status']){
+                        var listr = '';
+                        var tessta = data['summary'];
+                        console.log(tessta);
+
+{#                        for(var i=0;i<data['summary'].length;i++){#}
+{#                            var username = data['summary'][i][2];#}
+{#                            var contentneirong = data['summary'][i][1];#}
+{#                            var contenttime = data['summary'][i][4];#}
+{#                            var contentid = data['summary'][i][0];#}
+{#                            listr += '<li class="content-li-list"><div class="content-li-list-area" onmouseover="displayCommentReply(this);" onmouseout="hideCommentReply(this);"> ' + '<a class=content-user style="color: #369;">' + username + '</a>' + '     ' + '<span class="content-neirong" style="font-size: 14px;">' + contentneirong + '     ' + contenttime + '发布' + '</span>' + '<a class="comment-reply hide" onclick="replyComment(this,' + username +',' + newsnid +');">       回复</a>' + '<i class="contentidi hide">' + contentid + '</i>' + '</div> </li>' ;#}
+{#                        }#}
+                        var listr = ccitest(tessta,newsnid);
+{#                        console.log('ssssssssssssssss:',listr);#}
+                        $('.content-ul-' + newsnid).append(listr);
+                    }else{
+                        console.log('no');
+                    }
+                }
+            });
+            $('.content-area-' + newsnid).removeClass('hide');
+        }
+
+
+        html_str = '';
+        marg = 0;
+        digui_count = 0;
+        function ccitest(tessta,newsnid) {
+            for(var key in tessta){
+                var key_list = key.substring(1,key.length - 1).split(',');
+                var username = key_list[2];
+                var contentneirongold = key_list[1];
+                var contentneirong = contentneirongold.replaceAll(contentneirongold,"'","").trim();
+                var contenttimeold = key_list[4] + key_list[5] + key_list[6] + key_list[7] + key_list[8] + key_list[9];
+                var contenttime = contenttimeold.substring(18,key.length);
+                var contentid = key_list[0];
+        {#                var biaozhi = '19';#}
+                var biaozhi = key_list[10];
+                var newbiaozhi = biaozhi.replaceAll(biaozhi,"'","").trim();
+                if(newbiaozhi == 'None'){
+                    marg = 0;
+                    html_str += '<li class="content-li-list" style="border-top: 1px grey dashed;">' + '<div class="content-li-list-area" onmouseover="displayCommentReply(this);" onmouseout="hideCommentReply(this);" ' + 'style="margin-left:' + marg + 'px;">' + '<a class=content-user style="color: #369;">' + username + '</a>' + '     ' + '<span class="content-neirong" style="font-size: 14px;">' + contentneirong + '     ' + contenttime + '发布' + '</span>' + '<a class="comment-reply hide" onclick="replyComment(this,' + username +',' + newsnid +');">       回复</a>' + '<i class="contentidi hide">' + contentid + '</i>' + '</div> </li>';
+                }else{
+                    marg += 30;
+                    html_str += '<li class="content-li-list">' + '<div class="content-li-list-area" onmouseover="displayCommentReply(this);" onmouseout="hideCommentReply(this);" ' + 'style="margin-left:' + marg + 'px;">' + '<a class=content-user style="color: #369;">' + username + '</a>' + '     ' + '<span class="content-neirong" style="font-size: 14px;">' + contentneirong + '     ' + contenttime + '发布' + '</span>' + '<a class="comment-reply hide" onclick="replyComment(this,' + username +',' + newsnid +');">       回复</a>' + '<i class="contentidi hide">' + contentid + '</i>' + '</div> </li>';
+                }
+                var testret = testdictnull(tessta[key]);
+                if(testret){
+                    console.log('1');
+                    ccitest(tessta[key],newsnid);
+                }else{
+                    console.log('2');
+
+{#                    if(marg > 30){#}
+{#                        marg -= 30 * digui_count;#}
+{#                        digui_count = 0;#}
+{#                    }#}
+
+{#                    ccitest(tessta[key],newsnid);#}
+                }
+            }
+            return html_str
+        }
+
+        marg = 30
+
+        function testdictnull(dict) {
+            for(var key in dict){
+                return true;
+            }
+            return false;
+        }
+
+
+
+        function closeContent(ths,newsnid) {
+            global_reply_id = 'None';
+            $('.content-area-' + newsnid).addClass('hide');
+            $('.huifuyonghu-' + newsnid).addClass('hide');
+        }
+
+
+
+
+
+        function AddFavorAnimation(ths){
+            var offsetTop = -10;
+            var offsetLeft = 20;
+            var fontSize = 24;
+            var opacity = 1;
+            var tag = document.createElement('i');
+            tag.innerText = "+1";
+            tag.style.position = 'absolute';
+            tag.style.top = offsetTop + 'px';
+            tag.style.left = offsetLeft + 'px';
+            tag.style.fontSize = fontSize + "px";
+            tag.style.color = "#5cb85c";
+            tag.style.fontWeight = "700";
+            $(ths).append(tag);
+
+            var addInterval = setInterval(function(){
+                    fontSize += 5;
+                    offsetTop -= 15;
+                    offsetLeft += 5;
+                    opacity -= 0.1;
+                    tag.style.top = offsetTop+ 'px';
+                    tag.style.left = offsetLeft+ 'px';
+                    tag.style.fontSize = fontSize + 'px';
+                    tag.style.opacity = opacity;
+                if(opacity <= 0.5){
+                    tag.remove();
+                    clearInterval(addInterval);
+                }
+            },100)
+        }
+
+        /*
+        点赞-1效果
+         */
+        function MinusFavorAnimation(ths){
+            var offsetTop = -10;
+            var offsetLeft = 20;
+            var fontSize = 24;
+            var opacity = 1;
+            var tag = document.createElement('i');
+            tag.innerText = "-1";
+            tag.style.position = 'absolute';
+            tag.style.top = offsetTop + 'px';
+            tag.style.left = offsetLeft + 'px';
+            tag.style.fontSize = fontSize + "px";
+            tag.style.color = "#787878";
+            $(ths).append(tag);
+
+            var addInterval = setInterval(function(){
+                    fontSize += 5;
+                    offsetTop -= 15;
+                    offsetLeft += 5 ;
+                    opacity -= 0.1;
+                    tag.style.top = offsetTop+ 'px';
+                    tag.style.left = offsetLeft+ 'px';
+                    tag.style.fontSize = fontSize + 'px';
+                    tag.style.opacity = opacity;
+                if(opacity <= 0.5){
+                    tag.remove();
+                    clearInterval(addInterval);
+                }
+            },100)
+        }
+
+        function displayCommentReply(ths) {
+            $(ths).find(".comment-reply").removeClass('hide');
+        }
+        function hideCommentReply(ths) {
+            $(ths).find(".comment-reply").addClass('hide');
+        }
+
+        function replyComment(ths,username,newsnid) {
+            var commentid = $(ths).parent().find(".contentidi").text();
+            global_reply_id = commentid;
+            var huifuspan = '回复   ' + username + ':';
+            $('.huifuyonghu-' + newsnid).removeClass('hide');
+            $('.huifuyonghu-' + newsnid).find('.reply-user-span').text(huifuspan);
+        }
+
+    </script>
+</body>
+</html>

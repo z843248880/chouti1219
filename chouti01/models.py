@@ -70,5 +70,5 @@ class Comment(models.Model):
     device = models.CharField(max_length=16,default=0)
     content = models.CharField(max_length=150)
 
-    reply_id = models.ForeignKey('Comment', related_name='b', null=True, blank=True)
-
+    # reply_id = models.ForeignKey('Comment', related_name='b', null=True, blank=True)
+    reply_id = models.CharField(max_length=16,default=None,null=True,blank=True)

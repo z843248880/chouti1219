@@ -4,6 +4,7 @@ from django.shortcuts import render,HttpResponse,redirect
 
 from django import forms
 import json,re,time,datetime
+import collections
 
 from datetime import date
 
@@ -13,6 +14,8 @@ from django.forms.utils import ErrorDict
 from django.core.exceptions import ValidationError
 from backend import sendMsg, commons, randomcode,pager
 from django.db.models import F
+
+
 
 
 global logineduser
@@ -136,6 +139,8 @@ def auth(func):
         return func(request,*args,**kwargs)
     return inner
 
+comment_dic = {}
+
 @auth
 def index(request):
     if request.method == 'GET':
@@ -192,7 +197,6 @@ def index(request):
         print(page_obj.start)
         cursor.execute(sql,[current_login_user_nid,page_obj.start])
         newsret = cursor.fetchall()
-
         if not user:
             phoneuser = request.session.get('user_info')['phone']
             return render(request, 'index.html', {'logineduser': phoneuser,'newsitems':newsret,'str_page':str_page})
@@ -290,6 +294,55 @@ class CJsonEncoder(json.JSONEncoder):
         else:
             return json.JSONEncoder.default(self, obj)
 
+### comment tree   标准的json格式，带键值的
+# icount = 1
+# def tree_search(d_dic, comment_obj):
+#     for k, v in d_dic.items():
+#         if v['name'][0] == comment_obj[5]:
+#             d_dic[k]['val'] = collections.OrderedDict()
+#             d_dic[k]['val']['name'] = comment_obj
+#             d_dic[k]['val']['val'] = collections.OrderedDict()
+#             return
+#         else:
+#             if v['val']:
+#                 tree_search(d_dic[k]['val'], comment_obj)
+#
+#
+# def build_tree(comment_list):
+#     global icount
+#     comment_dic = collections.OrderedDict()
+#     for comment_obj in comment_list:
+#         # print('funck?:',type(str(comment_obj[5])),'_________-',comment_obj[5])
+#         if comment_obj[5] == 'None':
+#             comment_dic['dict' + str(icount)] = collections.OrderedDict()
+#             comment_dic['dict' + str(icount)]['name'] = comment_obj
+#             comment_dic['dict' + str(icount)]['val'] = collections.OrderedDict()
+#             icount += 1
+#         else:
+#             tree_search(comment_dic, comment_obj)
+#     return comment_dic
+
+def tree_search(d_dic, comment_obj):
+    for k, v_dic in d_dic.items():
+        # print(k)
+        # print('----------------: ',str(k[0]),'  &  ',comment_obj[5])
+        if str(k.strip('()').split(',')[0]) == comment_obj[5]:
+            d_dic[k][str(comment_obj)] = collections.OrderedDict()
+            return
+        else:
+            if v_dic:
+                tree_search(d_dic[k], comment_obj)
+
+
+def build_tree(comment_list):
+    comment_dic = collections.OrderedDict()
+    for comment_obj in comment_list:
+        # print('funck?:',type(str(comment_obj[5])),'_________-',comment_obj[5])
+        if str(comment_obj[5]) == 'None':
+            comment_dic[str(comment_obj)] = collections.OrderedDict()
+        else:
+            tree_search(comment_dic, comment_obj)
+    return comment_dic
 
 def content(request):
     ret = commons.BaseResponse()
@@ -298,13 +351,15 @@ def content(request):
         news_get_id = request.POST.get('news_id')
         user_get_id = request.session.get('user_info')['nid']
         contentneirong = request.POST.get('contentneirong')
+        replyid = request.POST.get('replyid')
         # current_time = datetime.datetime.now()
         current_time = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-        models.Comment.objects.create(user_info_id=user_get_id,news_id=news_get_id,ctime=current_time,content=contentneirong)
+        models.Comment.objects.create(user_info_id=user_get_id,news_id=news_get_id,ctime=current_time,content=contentneirong,reply_id=replyid)
         models.News.objects.filter(nid=news_get_id).update(comment_count=F('comment_count') + 1)
         ret.status = True
         return HttpResponse(json.dumps(ret.__dict__))
     elif request.method == 'GET':
+        global comment_dic
         news_get_id = request.GET.get('news_id')
         print('enwid:', news_get_id)
         sql = """
@@ -313,7 +368,9 @@ def content(request):
                 "chouti01_comment"."content",
                 "chouti01_userinfo"."nid",
                 "chouti01_news"."comment_count",
-                "chouti01_comment"."ctime"
+                "chouti01_comment"."ctime",
+                "chouti01_comment"."reply_id",
+                "chouti01_news"."nid"
             FROM
                 "chouti01_comment"
             LEFT OUTER JOIN "chouti01_userinfo" ON (
@@ -331,18 +388,31 @@ def content(request):
 
         cursor.execute(sql,[news_get_id,])
         contentret = cursor.fetchall()
-        print(contentret)
+        print('rr11:',contentret)
+        contentret_new = build_tree(contentret)
         ret.status = True
-        ret.summary = contentret
-        # print(ret.summary)
-        # print(contentret)
+        ret.summary = contentret_new
+        print('retttttttttttttttttttttt:',ret.summary)
+        # for k,v in ret.summary.items():
+        #     print('-----------------')
+        #     print(type(k))
+        #     print(type(v),'\n')
+        # print('ret.summary,',ret.summary)
+        # print(contentret_new)
         return HttpResponse(json.dumps(ret.__dict__,cls=CJsonEncoder))
 
 def searchtable(request):
     if request.method == 'GET':
-        a = models.Comment.objects.values_list()
+        models.Comment.objects.filter(nid__in=[23,24]).delete()
+        a = models.Comment.objects.values_list('nid','content','reply_id')
         print(a)
         return HttpResponse(None)
+
+
+def abctest(request):
+    return render(request,'abctest.html')
+
+
 
 
 
